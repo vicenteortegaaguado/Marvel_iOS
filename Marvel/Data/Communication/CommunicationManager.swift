@@ -33,30 +33,34 @@ final class CommunicationManager: CommunicationProtocol {
 
         URLSession(configuration: .default).dataTask(with: urlRequest) { [weak self] (data, response, error) in
             let httpResponse = response as? HTTPURLResponse
-
+            
             if let error = error {
-                completion(.failure(.api(.init(code: .init(value: httpResponse?.statusCode), message: error.localizedDescription))))
+                completion(.failure(.api(.init(code: nil, status: error.localizedDescription))))
             } else if let data = data {
-                // Is a cached response return nothing
-                if httpResponse?.statusCode == 304 {
-                    print("Cached")
-                    completion(.success(nil))
-                } else {
-                    self?.decodeData(data, completion: completion)
-                }
+                self?.processData(code: httpResponse?.statusCode, data: data, completion: completion)
             } else {
-                completion(.failure(.api(.init(code: .unknown, message: nil))))
+                completion(.failure(.unknown))
             }
         }.resume()
     }
     
-    private func decodeData<T: Codable>(_ data: Data, completion: @escaping ((Result<T?, ErrorType>) -> Void)) {
-        do {
-            let object = try Parser<APIResponse<T>>.decode(data: data)
-            lastETag = object.etag
-            completion(.success(object.data))
-        } catch {
-            completion(.failure(.data(.decoding(description: error.localizedDescription))))
+    private func processData<T: Codable>(code: Int?, data: Data, completion: @escaping ((Result<T?, ErrorType>) -> Void)) {
+        if let apiError = try? Parser<APIError>.decode(data: data) {
+            completion(.failure(.api(apiError)))
+        } else if code == 304 {
+            // Is a cached response return nothing
+            completion(.success(nil))
+        } else {
+            do {
+                let object = try Parser<APIResponse<T>>.decode(data: data)
+                lastETag = object.etag
+                completion(.success(object.data))
+            } catch {
+                // Wrong public or prive key return a bad formed error from Marvel with String code type
+                // Errors format
+                // https://developer.marvel.com/documentation/apiresults
+                completion(.failure(.data(.decoding(description: error.localizedDescription))))
+            }
         }
     }
 }

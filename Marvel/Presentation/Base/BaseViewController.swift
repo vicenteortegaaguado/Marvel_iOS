@@ -59,7 +59,7 @@ class BaseViewController: UIViewController, AlertHandler, LoadingHandler {
                                 responder.handler?()
                             }))
         }
-        showDialog(withTitle: error.title, message: error.message, buttons: buttons)
+        showDialog(withTitle: error.title, message: error.status, buttons: buttons)
     }
 }
 

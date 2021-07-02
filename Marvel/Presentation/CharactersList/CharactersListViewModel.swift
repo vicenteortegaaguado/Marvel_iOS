@@ -18,7 +18,7 @@ final class CharactersListViewModel: BaseViewModel {
         }
     }
     /// Number of characters to request in each block
-    /// Min: 1 -> Set more than 10 to request more characters with scroll
+    /// Min: 1
     /// Max: 100
     private var limit: Int { 10 }
     /// Current offset

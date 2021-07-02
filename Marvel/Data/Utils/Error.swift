@@ -10,50 +10,53 @@ import Foundation
 // Common error type
 protocol MarvelError: Error {
     var title: String? { get }
-    var message: String? { get }
+    var status: String? { get }
 }
 
 enum ErrorType: MarvelError {
     case api(APIError)
     case data(DataError)
+    case unknown
     
     var title: String? {
         switch self {
         case .api(let error): return error.title
         case .data(let error): return error.title
+        case .unknown: return "Error"
         }
     }
     
-    var message: String? {
+    var status: String? {
         switch self {
-        case .api(let error): return error.message
-        case .data(let error): return error.message
+        case .api(let error): return error.status
+        case .data(let error): return error.status
+        case .unknown: return "Unknown"
         }
     }
 }
 
-struct APIError: MarvelError {
-    enum HttpStatusCode: Int {
+struct APIError: MarvelError, Codable {
+    enum HttpStatusCode: Int, Codable {
         case missingParameter = 409
         case methodNotAllowed = 405
         case notFound = 404
         case forbidden = 403
         case invalidParameter = 401
-        case unknown
-        
-        init(value: Int?) {
-            let code = HttpStatusCode(rawValue: value ?? HttpStatusCode.unknown.rawValue)
-            self = code ?? HttpStatusCode.unknown
-        }
     }
     
-    let code: HttpStatusCode
-    let message: String?
+    let code: HttpStatusCode?
+    let status: String?
     
     var title: String? {
         switch self.code {
-        case .missingParameter, .methodNotAllowed, .notFound, .forbidden, .invalidParameter: return "Error \(self.code.rawValue)"
-        case .unknown: return "Error"
+        case .missingParameter, .methodNotAllowed, .notFound, .forbidden, .invalidParameter:
+            var errorCode: String = ""
+            if let code = self.code?.rawValue {
+                errorCode = "\(code)"
+            }
+            return "Error \(errorCode)"
+        default:
+            return "Error"
         }
     }
 }
@@ -66,7 +69,7 @@ enum DataError: MarvelError {
         return "Error"
     }
     
-    var message: String? {
+    var status: String? {
         switch self {
         case .url: return "Url is not in the correct format"
         case .decoding(let description): return description

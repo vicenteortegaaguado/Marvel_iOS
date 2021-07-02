@@ -12,12 +12,12 @@ class ErrorTests: XCTestCase {
 
     func testAPIError() {
         // Given
-        let missingParameter = ErrorType.api(.init(code: .missingParameter, message: "missingParameter"))
-        let methodNotAllowed = ErrorType.api(.init(code: .methodNotAllowed, message: "methodNotAllowed"))
-        let notFound = ErrorType.api(.init(code: .notFound, message: "notFound"))
-        let forbidden = ErrorType.api(.init(code: .forbidden, message: "forbidden"))
-        let invalidParameter = ErrorType.api(.init(code: .invalidParameter, message: "invalidParameter"))
-        let unknown = ErrorType.api(.init(code: .init(value: nil), message: nil))
+        let missingParameter = ErrorType.api(.init(code: .missingParameter, status: "missingParameter"))
+        let methodNotAllowed = ErrorType.api(.init(code: .methodNotAllowed, status: "methodNotAllowed"))
+        let notFound = ErrorType.api(.init(code: .notFound, status: "notFound"))
+        let forbidden = ErrorType.api(.init(code: .forbidden, status: "forbidden"))
+        let invalidParameter = ErrorType.api(.init(code: .invalidParameter, status: "invalidParameter"))
+        let unknown = ErrorType.api(.init(code: nil, status: nil))
         
         // Then
         XCTAssertEqual(missingParameter.title, "Error 409")
@@ -27,12 +27,12 @@ class ErrorTests: XCTestCase {
         XCTAssertEqual(invalidParameter.title, "Error 401")
         XCTAssertEqual(unknown.title, "Error")
         
-        XCTAssertEqual(missingParameter.message, "missingParameter")
-        XCTAssertEqual(methodNotAllowed.message, "methodNotAllowed")
-        XCTAssertEqual(notFound.message, "notFound")
-        XCTAssertEqual(forbidden.message, "forbidden")
-        XCTAssertEqual(invalidParameter.message, "invalidParameter")
-        XCTAssertEqual(unknown.message, nil)
+        XCTAssertEqual(missingParameter.status, "missingParameter")
+        XCTAssertEqual(methodNotAllowed.status, "methodNotAllowed")
+        XCTAssertEqual(notFound.status, "notFound")
+        XCTAssertEqual(forbidden.status, "forbidden")
+        XCTAssertEqual(invalidParameter.status, "invalidParameter")
+        XCTAssertEqual(unknown.status, nil)
     }
     
     func testDataError() {
@@ -44,7 +44,7 @@ class ErrorTests: XCTestCase {
         XCTAssertEqual(decoding.title, "Error")
         XCTAssertEqual(url.title, "Error")
         
-        XCTAssertEqual(decoding.message, "description")
-        XCTAssertEqual(url.message, "Url is not in the correct format")
+        XCTAssertEqual(decoding.status, "description")
+        XCTAssertEqual(url.status, "Url is not in the correct format")
     }
 }

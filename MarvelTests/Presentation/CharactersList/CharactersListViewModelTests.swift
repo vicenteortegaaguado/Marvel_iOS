@@ -57,7 +57,7 @@ class CharactersListViewModelTests: XCTestCase {
 
     func testFetchCharactersError() {
         // Given
-        mockCommunicationManager.error = .api(.init(code: .forbidden, message: nil))
+        mockCommunicationManager.error = .api(.init(code: .forbidden, status: nil))
         
         let loadingShow = XCTestExpectation(description: "loadingShow")
         let loadingHide = XCTestExpectation(description: "loadingHide")

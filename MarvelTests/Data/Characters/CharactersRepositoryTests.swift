@@ -38,7 +38,7 @@ class CharactersRepositoryTests: XCTestCase {
     
     func testGetCharactersError() {
         // Given
-        mockCommunicationManager.error = .api(.init(code: .forbidden, message: nil))
+        mockCommunicationManager.error = .api(.init(code: .forbidden, status: nil))
         
         let resultExpectation = XCTestExpectation(description: "result")
         
